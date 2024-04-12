@@ -4,6 +4,7 @@ import { toggleTodoCompleted } from '../slices/todoSlice';
 
 export const toggleStatus = createAsyncThunk(
   'status/toggleStatus',
+  // getStatus() error;
   async (id: number, { dispatch, rejectWithValue, getState }) => {
     try {
       const todo = store.getState().todos.todos.find((todo) => todo.id === id);
