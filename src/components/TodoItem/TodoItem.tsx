@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { deleteTodo, toggleTodoCompleted } from '../../redux/slices/todoSlice';
 
 export const TodoItem: FC = () => {
-  const todos = useAppSelector((state) => state.todos);
+  const todos = useAppSelector((state) => state.todos.todos);
   const dispatch = useAppDispatch();
 
   const handleDeleteTodo = (todoId: number) => {
@@ -26,7 +26,7 @@ export const TodoItem: FC = () => {
           <span
             style={{ textDecoration: todo.completed ? 'line-through' : '' }}
           >
-            {todo.name}
+            {todo.title}
           </span>
           <button type='button' onClick={() => handleDeleteTodo(todo.id)}>
             Delete todo

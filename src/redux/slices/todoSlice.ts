@@ -1,22 +1,51 @@
-import { ITodo } from '../../interfaces/ITodo';
+import { ITodo, ITodos } from '../../interfaces/ITodo';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { fetchTodos } from '../asyncAction/fetchTodos';
+import { deleteTodoWithAction } from '../asyncAction/deleteTodosAction';
 
-const todosState: ITodo[] = [];
+const todosState: ITodos = {
+  todos: [],
+  status: '',
+  error: '',
+};
 
 const todoSlice = createSlice({
   name: 'todos',
   initialState: todosState,
   reducers: {
-    addNewTodo(state, action: PayloadAction<string>) {
-      state.push({ id: +new Date(), name: action.payload, completed: false });
+    addNewTodo(state, action: PayloadAction<ITodo>) {
+      state.todos.push(action.payload);
     },
     deleteTodo(state, action: PayloadAction<number>) {
-      return state.filter((todo) => todo.id !== action.payload);
+      state.todos = state.todos.filter((todo) => todo.id !== action.payload);
     },
     toggleTodoCompleted(state, action: PayloadAction<number>) {
-      const toggleId = state.find((todo) => todo.id === action.payload);
-      toggleId!.completed = !toggleId!.completed;
+      const toggleCompleted = state.todos.find(
+        (todo) => todo.id === action.payload
+      );
+      if (toggleCompleted) {
+        toggleCompleted.completed = !toggleCompleted.completed;
+      }
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTodos.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        state.status = 'resolved';
+        state.todos = action.payload;
+      })
+      .addCase(fetchTodos.rejected, (state, action) => {
+        state.status = 'rejected';
+        state.error = action.payload as unknown as string;
+      })
+      .addCase(deleteTodoWithAction.rejected, (state, action) => {
+        state.status = 'rejected';
+        state.error = action.error.message as unknown as string;
+      });
   },
 });
 

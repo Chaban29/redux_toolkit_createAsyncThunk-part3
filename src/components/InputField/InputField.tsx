@@ -1,6 +1,6 @@
 import { FC, Fragment, useState } from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { addNewTodo } from '../../redux/slices/todoSlice';
+import { addTodosActions } from '../../redux/asyncAction/addTodosAction';
 
 export const InputField: FC = () => {
   const [text, setText] = useState<string>('');
@@ -8,7 +8,7 @@ export const InputField: FC = () => {
 
   const handleAddNewTodo = () => {
     if (text.trim().length) {
-      dispatch(addNewTodo(text));
+      dispatch(addTodosActions(text));
       setText('');
     }
   };

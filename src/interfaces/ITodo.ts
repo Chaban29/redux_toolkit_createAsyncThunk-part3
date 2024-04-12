@@ -1,5 +1,11 @@
 export interface ITodo {
   id: number;
-  name: string;
+  title: string;
   completed: boolean;
+}
+
+export interface ITodos {
+  todos: ITodo[];
+  status: string;
+  error: null | string;
 }
