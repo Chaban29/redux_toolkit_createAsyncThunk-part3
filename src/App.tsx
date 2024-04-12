@@ -14,7 +14,7 @@ export const App: FC = () => {
     dispatch(fetchTodos());
   }, [dispatch]);
 
-  if (status === 'loading') {
+  if (!status) {
     return <div>Loading...</div>;
   }
 

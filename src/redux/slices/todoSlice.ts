@@ -3,15 +3,17 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { fetchTodos } from '../asyncAction/fetchTodos';
 import { deleteTodoWithAction } from '../asyncAction/deleteTodosAction';
 
-const todosState: ITodos = {
+export const todosState: ITodos = {
   todos: [],
-  status: '',
+  status: false,
   error: '',
 };
 
+const initialState = todosState;
+
 const todoSlice = createSlice({
   name: 'todos',
-  initialState: todosState,
+  initialState,
   reducers: {
     addNewTodo(state, action: PayloadAction<ITodo>) {
       state.todos.push(action.payload);
@@ -31,19 +33,19 @@ const todoSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchTodos.pending, (state) => {
-        state.status = 'loading';
+        state.status = false;
         state.error = null;
       })
       .addCase(fetchTodos.fulfilled, (state, action) => {
-        state.status = 'resolved';
+        state.status = true;
         state.todos = action.payload;
       })
       .addCase(fetchTodos.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = false;
         state.error = action.payload as unknown as string;
       })
       .addCase(deleteTodoWithAction.rejected, (state, action) => {
-        state.status = 'rejected';
+        state.status = false;
         state.error = action.error.message as unknown as string;
       });
   },

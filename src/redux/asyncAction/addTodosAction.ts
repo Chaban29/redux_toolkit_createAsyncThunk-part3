@@ -25,7 +25,7 @@ export const addTodosActions = createAsyncThunk(
       if (!response.ok) {
         throw new Error('Can\t add new todo');
       }
-      const data = await response.json();
+      const data = (await response.json()) as ITodo;
       console.log(data);
 
       return dispatch(addNewTodo(data));

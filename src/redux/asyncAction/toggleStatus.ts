@@ -1,13 +1,20 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { store } from '../store/store';
-import { toggleTodoCompleted } from '../slices/todoSlice';
+import { ITodo } from '../../interfaces/ITodo';
+import { todosState, toggleTodoCompleted } from '../slices/todoSlice';
 
-export const toggleStatus = createAsyncThunk(
+export const toggleStatus = createAsyncThunk<
+  ITodo,
+  number,
+  { state: { todos: typeof todosState } }
+>(
   'status/toggleStatus',
-  // getStatus() error;
   async (id: number, { dispatch, rejectWithValue, getState }) => {
     try {
-      const todo = store.getState().todos.todos.find((todo) => todo.id === id);
+      const todo = getState().todos.todos.find((todo) => todo.id === id);
+      if (!todo) {
+        throw new Error(`Todo with id ${id} not found`);
+      }
+
       const response = await fetch(
         `https://jsonplaceholder.typicode.com/todos/${id}?_limit=10`,
         {
@@ -16,18 +23,22 @@ export const toggleStatus = createAsyncThunk(
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            completed: !todo?.completed,
+            completed: !todo.completed,
           }),
         }
       );
+
       if (!response.ok) {
-        throw new Error('Can\t delete todos');
+        throw new Error('Failed to update todo status');
       }
-      return dispatch(toggleTodoCompleted(id));
+
+      dispatch(toggleTodoCompleted(id));
+
+      return todo;
     } catch (error) {
-      if (error instanceof Error) {
-        return rejectWithValue(error.message);
-      }
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Unknown error'
+      );
     }
   }
 );
