@@ -6,6 +6,6 @@ export interface ITodo {
 
 export interface ITodos {
   todos: ITodo[];
-  status: boolean;
+  loading: boolean;
   error: null | string;
 }
